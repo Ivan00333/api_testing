@@ -13,7 +13,7 @@ LIST_ALL_SUB_BREEDS = [
         "plott",
         "walker"]
 
-afghan_file_path = os.path.join(BASE_DIR, 'files', 'afgain_list.json')
+afghan_file_path = os.path.join(BASE_DIR, 'files', 'afghan_list.json')
 with open(afghan_file_path, 'r') as file:
         LIST_BREEDS_IMAGES_AFGHAN = json.load(file)
 
@@ -40,3 +40,13 @@ with open(plott_file_path, 'r') as file_basset:
 walker_file_path = os.path.join(BASE_DIR, 'files', 'walker_list.json')
 with open(walker_file_path, 'r') as file_basset:
         LIST_BREEDS_IMAGES_WALKER = json.load(file_basset)
+
+LIST_ALL_BREEDS_IMAGES = [
+        LIST_BREEDS_IMAGES_ENGLISH,
+        LIST_BREEDS_IMAGES_WALKER,
+        LIST_BREEDS_IMAGES_AFGHAN,
+        LIST_BREEDS_IMAGES_PLOTT,
+        LIST_BREEDS_IMAGES_BASSET,
+        LIST_BREEDS_IMAGES_BLOOD,
+        LIST_BREEDS_IMAGES_IBIZAN
+        ]

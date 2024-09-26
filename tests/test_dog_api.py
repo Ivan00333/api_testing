@@ -1,26 +1,85 @@
+import json
+import os
 import pytest
 from lib.my_requests import MyRequests
 from constants import Urls
 from lib.assertions import Assertions
-from lib.dog_data import LIST_ALL_SUB_BREEDS
+from lib.dog_data import LIST_ALL_SUB_BREEDS, LIST_ALL_BREEDS_IMAGES
+from lib.base_case import BaseCase
 
-class TestDogApi:
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+class TestDogApi(BaseCase):
 
     def test_list_all_sub_breeds(self):
         response = MyRequests.get(Urls.URL_LIST_ALL_SUB_BREEDS)
-        message = response.json()['message']
+        message = self.get_json_value(response, "message")
 
-        Assertions.assert_status_code(response, 200)
-        Assertions.assert_json_has_keys(response, ['message', 'status'])
-        Assertions.assert_json_value_by_name(response, "status", "success")
+        Assertions.check_response(
+            response,
+            status_code=200,
+            list_names=['message', 'status'],
+            name="status",
+            expected_value="success"
+        )
 
-        if len(LIST_ALL_SUB_BREEDS) == len(message):
-            for i in LIST_ALL_SUB_BREEDS:
-                assert i in message, f"{i} not in the list {message}"
-        else:
-            raise ValueError(f"Expected {len(LIST_ALL_SUB_BREEDS)} items, but got {len(message)}")
+        assert set(LIST_ALL_SUB_BREEDS) == set(message), "List of sub-breeds doesn't not match"
 
     @pytest.mark.parametrize('breed', LIST_ALL_SUB_BREEDS)
     def test_list_all_sub_breeds_images(self, breed):
         response = MyRequests.get(f"{Urls.BASE_URL}{breed}/images")
-        print(response.url)
+
+        Assertions.check_response(
+            response,
+            status_code=200,
+            list_names=['message', 'status'],
+            name="status",
+            expected_value="success"
+        )
+
+        message_images = self.get_json_value(response, "message")
+        file_path = os.path.join(BASE_DIR, 'files', f"{breed}_list.json")
+
+        with open(file_path, 'r') as file:
+            expected_images = json.load(file)
+
+        assert set(message_images) == set(expected_images), f"Images for breed {breed} do not match"
+
+    def test_random_image(self):
+        previous_message = None
+
+        for r in range(3):
+            response = MyRequests.get(Urls.URL_GET_IMAGE_RANDOM)
+
+            Assertions.check_response(
+                response,
+                status_code=200,
+                list_names=['message', 'status'],
+                name="status",
+                expected_value="success"
+            )
+
+            current_message = self.get_json_value(response, "message")
+            if previous_message is not None:
+                assert current_message != previous_message, "Message in the response is the same as the previous one"
+
+            previous_message = current_message
+
+    @pytest.mark.parametrize('param', ['new', '02088094_1003'])
+    def test_negative_sub_breed_image(self, param):
+        response = MyRequests.get(f"{Urls.BASE_URL}{param}/images")
+
+        Assertions.check_response(
+            response,
+            status_code=404,
+            list_names=['message', 'status', "code"],
+            name="status",
+            expected_value="error"
+        )
+
+        Assertions.assert_json_value_by_name(response,\
+            "message", "Breed not found (sub breed does not exist)")
+
+
