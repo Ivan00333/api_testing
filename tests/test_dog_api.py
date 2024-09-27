@@ -67,7 +67,7 @@ class TestDogApi(BaseCase):
 
             previous_message = current_message
 
-    @pytest.mark.parametrize('param', ['new', '02088094_1003'])
+    @pytest.mark.parametrize('param', ['new', '02088094_1003', 'null'])
     def test_negative_sub_breed_image(self, param):
         response = MyRequests.get(f"{Urls.BASE_URL}{param}/images")
 
@@ -81,5 +81,25 @@ class TestDogApi(BaseCase):
 
         Assertions.assert_json_value_by_name(response,\
             "message", "Breed not found (sub breed does not exist)")
+
+    @pytest.mark.parametrize('breed', LIST_ALL_SUB_BREEDS)
+    @pytest.mark.parametrize('number', [1, 3, 10])
+    def test_multiple_images(self, breed, number):
+        response = MyRequests.get(f"{Urls.BASE_URL}{breed}/images/random/{number}")
+        message = self.get_json_value(response, "message")
+
+        Assertions.check_response(
+            response,
+            status_code=200,
+            list_names=['message', 'status'],
+            name="status",
+            expected_value="success"
+        )
+        if breed != 'plott':
+            assert len(message) == number, \
+                f"Number of images for sub-breed {breed} is {len(message)}, expected {number}"
+        else:
+            assert len(message) == number or len(message) == 2, \
+                f"Number of images for sub-breed {breed} is {len(message)}, expected {number}"
 
 
