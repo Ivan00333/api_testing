@@ -2,9 +2,9 @@ import json
 import os
 import pytest
 from lib.my_requests import MyRequests
-from constants import Urls
+from constants import UrlsDogApi
 from lib.assertions import Assertions
-from lib.dog_data import LIST_ALL_SUB_BREEDS, LIST_ALL_BREEDS_IMAGES
+from lib.dog_data import LIST_ALL_SUB_BREEDS
 from lib.base_case import BaseCase
 
 
@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class TestDogApi(BaseCase):
 
     def test_list_all_sub_breeds(self):
-        response = MyRequests.get(Urls.URL_LIST_ALL_SUB_BREEDS)
+        response = MyRequests.get(UrlsDogApi.URL_LIST_ALL_SUB_BREEDS)
         message = self.get_json_value(response, "message")
 
         Assertions.check_response(
@@ -29,7 +29,7 @@ class TestDogApi(BaseCase):
 
     @pytest.mark.parametrize('breed', LIST_ALL_SUB_BREEDS)
     def test_list_all_sub_breeds_images(self, breed):
-        response = MyRequests.get(f"{Urls.BASE_URL}{breed}/images")
+        response = MyRequests.get(f"{UrlsDogApi.BASE_URL}{breed}/images")
 
         Assertions.check_response(
             response,
@@ -40,7 +40,7 @@ class TestDogApi(BaseCase):
         )
 
         message_images = self.get_json_value(response, "message")
-        file_path = os.path.join(BASE_DIR, 'files', f"{breed}_list.json")
+        file_path = os.path.join(BASE_DIR, 'files/dog_files', f"{breed}_list.json")
 
         with open(file_path, 'r') as file:
             expected_images = json.load(file)
@@ -51,7 +51,7 @@ class TestDogApi(BaseCase):
         previous_message = None
 
         for r in range(3):
-            response = MyRequests.get(Urls.URL_GET_IMAGE_RANDOM)
+            response = MyRequests.get(UrlsDogApi.URL_GET_IMAGE_RANDOM)
 
             Assertions.check_response(
                 response,
@@ -69,7 +69,7 @@ class TestDogApi(BaseCase):
 
     @pytest.mark.parametrize('param', ['new', '02088094_1003', 'null'])
     def test_negative_sub_breed_image(self, param):
-        response = MyRequests.get(f"{Urls.BASE_URL}{param}/images")
+        response = MyRequests.get(f"{UrlsDogApi.BASE_URL}{param}/images")
 
         Assertions.check_response(
             response,
@@ -85,7 +85,7 @@ class TestDogApi(BaseCase):
     @pytest.mark.parametrize('breed', LIST_ALL_SUB_BREEDS)
     @pytest.mark.parametrize('number', [1, 3, 10])
     def test_multiple_images(self, breed, number):
-        response = MyRequests.get(f"{Urls.BASE_URL}{breed}/images/random/{number}")
+        response = MyRequests.get(f"{UrlsDogApi.BASE_URL}{breed}/images/random/{number}")
         message = self.get_json_value(response, "message")
 
         Assertions.check_response(
