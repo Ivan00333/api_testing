@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 from requests import Response
 import json
-from lib.schemas.brewery_schema import BrewerySchema
+
 
 class Assertions:
     @staticmethod
@@ -43,7 +43,7 @@ class Assertions:
         assert name in response_as_dict, f"Response JSON doesn't have key '{name}'"
 
     @staticmethod
-    def assert_json_has_keys(response: Response, names: list=None):
+    def assert_json_has_keys(response: Response, names: list = None):
         if names is not None:
             try:
                 response_content = response.json()
@@ -61,9 +61,8 @@ class Assertions:
             else:
                 assert False, "Response content is neither a JSON object nor a list of dictionaries"
 
-
     @staticmethod
-    def check_response(response, status_code: int, list_names: list=None, name: str=None, expected_value: str=None):
+    def check_response(response, status_code: int, list_names: list = None, name: str = None, expected_value: str = None):
         Assertions.assert_status_code(response, status_code)
         Assertions.assert_json_has_keys(response, list_names)
         Assertions.assert_json_value_by_name(response, name, expected_value)

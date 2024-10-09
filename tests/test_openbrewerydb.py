@@ -45,4 +45,3 @@ class TestOpenBrewery(BaseCase):
 
         for item in response.json():
             assert item['country'] == country, f"Expected city - {country}, actual - {item['country']}"
-

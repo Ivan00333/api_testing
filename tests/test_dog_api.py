@@ -79,8 +79,9 @@ class TestDogApi(BaseCase):
             expected_value="error"
         )
 
-        Assertions.assert_json_value_by_name(response,\
-            "message", "Breed not found (sub breed does not exist)")
+        Assertions.assert_json_value_by_name(response,
+                                             "message",
+                                             "Breed not found (sub breed does not exist)")
 
     @pytest.mark.parametrize('breed', LIST_ALL_SUB_BREEDS)
     @pytest.mark.parametrize('number', [1, 3, 10])
@@ -101,5 +102,6 @@ class TestDogApi(BaseCase):
         else:
             assert len(message) == number or len(message) == 2, \
                 f"Number of images for sub-breed {breed} is {len(message)}, expected {number}"
+
 
 

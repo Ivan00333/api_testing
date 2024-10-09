@@ -1,5 +1,3 @@
-import json
-
 import pytest
 import random
 from lib.base_case import BaseCase
@@ -8,9 +6,11 @@ from lib.my_requests import MyRequests
 from constants import UrlsJsonplaceholder
 from lib.schemas.jsonplaceholder_schema import JsonplaceholderSchema, JsonplaceholderListing
 
+
 class TestJsonplaceholder(BaseCase):
 
     list_names = ['userId', 'id', 'title', 'body']
+
     @pytest.mark.parametrize('id', [1, 2, 10])
     def test_get_resource_by_id(self, id):
         response = MyRequests.get(f"{UrlsJsonplaceholder.BASE_URL}/{id}")
@@ -36,7 +36,6 @@ class TestJsonplaceholder(BaseCase):
               }
 
         response = MyRequests.post(UrlsJsonplaceholder.BASE_URL, json=payload, headers=headers)
-        response_as_dict = response.json()
 
         Assertions.check_status_code_and_schema(response, JsonplaceholderSchema, 201)
         Assertions.assert_json_value_by_name(response, 'title', payload["title"])
@@ -46,7 +45,7 @@ class TestJsonplaceholder(BaseCase):
     def test_delete_resource(self):
         response = MyRequests.delete(f"{UrlsJsonplaceholder.BASE_URL}/1")
 
-        Assertions.assert_status_code(response,200)
+        Assertions.assert_status_code(response, 200)
 
     @pytest.mark.parametrize('user_id', [1, 5])
     def test_filter_by_user_id(self, user_id):

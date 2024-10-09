@@ -1,5 +1,6 @@
 import requests
 
+
 class MyRequests():
     @staticmethod
     def _send(url: str, data: dict, headers: dict, cookies: dict, method: str):
@@ -7,7 +8,6 @@ class MyRequests():
             headers = {}
         if cookies is None:
             cookies = {}
-
 
         if method == 'POST':
             response = requests.post(url, json=data, headers=headers, cookies=cookies)
@@ -23,15 +23,15 @@ class MyRequests():
         return response
 
     @staticmethod
-    def post(url: str, json: dict=None, headers: dict=None, cookies: dict=None):
+    def post(url: str, json: dict = None, headers: dict = None, cookies: dict = None):
         return MyRequests._send(url, json, headers, cookies, 'POST')
 
     @staticmethod
-    def get(url: str, data: dict=None, headers: dict=None, cookies: dict=None):
+    def get(url: str, data: dict = None, headers: dict = None, cookies: dict = None):
         return MyRequests._send(url, data, headers, cookies, 'GET')
 
     @staticmethod
-    def put(url: str, data: dict=None, headers: dict=None, cookies: dict=None):
+    def put(url: str, data: dict = None, headers: dict = None, cookies: dict = None):
         return MyRequests._send(url, data, headers, cookies, 'PUT')
 
     @staticmethod
