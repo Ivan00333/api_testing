@@ -12,13 +12,26 @@ class Assertions:
     @staticmethod
     def assert_json_value_by_name(response: Response, name, expected_value):
         try:
-            response_as_dict = response.json()
+            response_content = response.json()
         except json.JSONDecoder:
             assert False, f"Response is not in JSON format. Response text is '{response.text}'"
 
-        assert name in response_as_dict, f"Response JSON doesn't have key '{name}'"
-        assert response_as_dict[name] == expected_value, \
-            f"Expected value is {expected_value}. Actual: {response_as_dict[name]}"
+        if isinstance(response_content, dict):
+
+            assert name in response_content, f"Response JSON doesn't have key '{name}'"
+            assert response_content[name] == expected_value, \
+                f"Expected value is {expected_value}. Actual: {response_content[name]}"
+
+        elif isinstance(response_content, list):
+            for item in response_content:
+                assert isinstance(item, dict), "List element is not a dictionary"
+                if name in item:
+                    assert item[name] == expected_value, \
+                        f"Expected value is {expected_value}. Actual: {item[name]}"
+                    return
+            assert False, f"None of the list items contain the key '{name}'"
+        else:
+            assert False, "Response content is neither a JSON object nor a list of dictionaries"
 
     @staticmethod
     def assert_json_has_key(response: Response, name):
@@ -33,12 +46,20 @@ class Assertions:
     def assert_json_has_keys(response: Response, names: list=None):
         if names is not None:
             try:
-                response_as_dict = response.json()
-            except json.JSONDecoder:
+                response_content = response.json()
+            except json.JSONDecodeError:
                 assert False, f"Response is not in JSON format. Response text is '{response.text}'"
 
-            for name in names:
-                assert name in response_as_dict, f"Response JSON doesn't have key '{name}'"
+            if isinstance(response_content, dict):
+                for name in names:
+                    assert name in response_content, f"Response JSON doesn't have key '{name}'"
+            elif isinstance(response_content, list):
+                for item in response_content:
+                    assert isinstance(item, dict), "List element is not a dictionary"
+                    for name in names:
+                        assert name in item, f"One of the list items doesn't have key '{name}'"
+            else:
+                assert False, "Response content is neither a JSON object nor a list of dictionaries"
 
 
     @staticmethod

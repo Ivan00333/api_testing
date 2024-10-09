@@ -13,5 +13,9 @@ class UrlsOpenBrewery(enum.auto):
 
     BASE_URL = 'https://api.openbrewerydb.org/v1/breweries/'
 
+class UrlsJsonplaceholder(enum.auto):
+
+    BASE_URL = 'https://jsonplaceholder.typicode.com/posts'
+
 
 

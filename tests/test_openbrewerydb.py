@@ -1,6 +1,6 @@
 import pytest
 from lib.schemas.brewery_schema import BrewerySchema
-from lib.openbrewery_data import LIST_BREWERIES, get_ids_breweries
+from lib.openbrewery_data import LIST_BREWERIES, get_ids_breweries, CITIES, COUNTRIES
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from lib.my_requests import MyRequests
@@ -26,4 +26,23 @@ class TestOpenBrewery(BaseCase):
         breweries_list = response.json()
 
         Assertions.check_status_code_and_schema(response, BrewerySchema, 200)
-        assert len(breweries_list) == per_page, f"Expected number of breweries is {per_page}, actual is {len(breweries_list)} "
+        assert len(breweries_list) == per_page, f"Expected number of breweries is {per_page}, actual is {len(breweries_list)}"
+
+    @pytest.mark.parametrize('city', CITIES)
+    def test_get_breweries_by_city(self, city):
+        response = MyRequests.get(f"{UrlsOpenBrewery.BASE_URL}?by_city={city}")
+
+        Assertions.check_status_code_and_schema(response, BrewerySchema, 200)
+
+        for item in response.json():
+            assert item['city'] == city, f"Expected city - {city}, actual - {item['city']}"
+
+    @pytest.mark.parametrize('country', COUNTRIES)
+    def test_get_breweries_by_country(self, country):
+        response = MyRequests.get(f"{UrlsOpenBrewery.BASE_URL}?by_city={country}")
+
+        Assertions.check_status_code_and_schema(response, BrewerySchema, 200)
+
+        for item in response.json():
+            assert item['country'] == country, f"Expected city - {country}, actual - {item['country']}"
+

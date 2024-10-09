@@ -10,7 +10,7 @@ class MyRequests():
 
 
         if method == 'POST':
-            response = requests.post(url, data=data, headers=headers, cookies=cookies)
+            response = requests.post(url, json=data, headers=headers, cookies=cookies)
         elif method == 'GET':
             response = requests.get(url, params=data, headers=headers, cookies=cookies)
         elif method == 'PUT':
@@ -23,8 +23,8 @@ class MyRequests():
         return response
 
     @staticmethod
-    def post(url: str, data: dict=None, headers: dict=None, cookies: dict=None):
-        return MyRequests._send(url, data, headers, cookies, 'POST')
+    def post(url: str, json: dict=None, headers: dict=None, cookies: dict=None):
+        return MyRequests._send(url, json, headers, cookies, 'POST')
 
     @staticmethod
     def get(url: str, data: dict=None, headers: dict=None, cookies: dict=None):
